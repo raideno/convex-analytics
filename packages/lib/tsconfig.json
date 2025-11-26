@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "types": ["vite/client"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["esnext", "ESNext.Array", "dom", "dom.iterable"],
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": true,
+    "outDir": "dist",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@/*": ["./src/server/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "*.mjs", "vite-env.d.ts"],
+  "exclude": [
+    "**/*.local*",
+    "node_modules",
+    "dist",
+    "packages/docs",
+    "test",
+    "test-router",
+    "test-nextjs"
+  ]
+}

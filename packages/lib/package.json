@@ -1,0 +1,50 @@
+{
+  "name": "@raideno/convex-analytics",
+  "version": "0.0.1",
+  "description": "Easily integrate analytics into your convex backend.",
+  "keywords": [
+    "analytics",
+    "tracking",
+    "convex"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "../../README.md"
+  ],
+  "exports": {
+    "./server": {
+      "import": "./dist/server.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "homepage": "https://raideno.github.io/convex-analytics",
+  "bugs": "https://github.com/raideno/convex-analytics/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raideno/convex-analytics"
+  },
+  "license": "Apache-2.0",
+  "author": "raideno",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "convex": "^1.26.2"
+  },
+  "devDependencies": {
+    "@convex-dev/auth": "^0.0.88",
+    "@types/node": "^24.3.0",
+    "convex": "^1.0.2",
+    "rollup-plugin-visualizer": "^6.0.3",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0",
+    "vite": "^7.1.5",
+    "vite-plugin-compile-time": "^0.4.6",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}

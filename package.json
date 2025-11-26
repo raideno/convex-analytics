@@ -1,0 +1,28 @@
+{
+  "name": "convex-analytics",
+  "version": "0.0.0",
+  "description": "Easily integrate analytics into your convex backend.",
+  "keywords": [
+    "analytics",
+    "tracking",
+    "convex"
+  ],
+  "workspaces": [
+    "packages/lib",
+    "packages/docs",
+    "packages/demo"
+  ],
+  "homepage": "https://raideno.github.io/convex-analytics",
+  "bugs": "https://github.com/raideno/convex-analytics/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raideno/convex-analytics"
+  },
+  "license": "Apache-2.0",
+  "author": "raideno",
+  "scripts": {},
+  "type": "module",
+  "devDependencies": {
+    "globals": "^16.4.0"
+  }
+}
