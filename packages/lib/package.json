@@ -16,6 +16,18 @@
     "./server": {
       "import": "./dist/server.js",
       "types": "./dist/index.d.ts"
+    },
+    "./processors": {
+      "import": "./dist/processors.js",
+      "types": "./dist/processors.d.ts"
+    },
+    "./processors/discord": {
+      "import": "./dist/processors/discord.js",
+      "types": "./dist/processors/discord.d.ts"
+    },
+    "./processors/posthog": {
+      "import": "./dist/processors/posthog.js",
+      "types": "./dist/processors/posthog.d.ts"
     }
   },
   "homepage": "https://raideno.github.io/convex-analytics",

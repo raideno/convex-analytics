@@ -1,3 +1,4 @@
+import { AnalyticsDataModel } from "@/schema";
 import { storeDispatchTyped } from "@/store";
 import { Execution, InternalConfiguration, InternalOptions } from "@/types";
 import {
@@ -8,9 +9,11 @@ import {
 } from "convex/server";
 
 export type TrackArgs = {
-  tag: string;
-  content: any;
+  name: string;
+  properties: any;
+  distinctId: string;
 };
+
 export const TrackImplementation = (
   context: GenericActionCtx<AnyDataModel> | GenericMutationCtx<AnyDataModel>,
   args: TrackArgs,
@@ -27,70 +30,120 @@ export const TrackImplementation = (
   }
 };
 
-const trackFromMutation = (
-  context: GenericMutationCtx<AnyDataModel>,
+const trackFromMutation = async (
+  context: GenericMutationCtx<AnalyticsDataModel>,
   args: TrackArgs,
   execution: Execution,
-  _: InternalConfiguration,
+  configuration: InternalConfiguration,
   options: InternalOptions
 ) => {
   if (execution.blocking) {
-    return context.db.insert("events", {
-      tag: args.tag,
-      content: args.content,
+    await context.db.insert("analyticsEvents", {
+      name: args.name,
+      properties: args.properties,
+      distinctId: args.distinctId,
       processedAt: null,
     });
+
+    if (configuration.processEveryK === 1) {
+      await context.scheduler.runAfter(
+        0,
+        `${options.base}:${options.process}` as unknown as typeof anyApi.analytics.process,
+        {}
+      );
+    } else {
+      const count = await incrementEventCounter(context);
+      if (count >= configuration.processEveryK) {
+        await context.scheduler.runAfter(
+          0,
+          `${options.base}:${options.process}` as unknown as typeof anyApi.analytics.process,
+          {}
+        );
+      }
+    }
   } else {
-    return context.scheduler.runAfter(
+    await context.scheduler.runAfter(
       0,
       `${options.base}:${options.store}` as unknown as typeof anyApi.analytics.store,
       {
-        table: "events",
-        operation: "insert",
-        data: {
-          tag: args.tag,
-          content: args.content,
-          processedAt: null,
+        operation: "createEventsAndCheckThreshold",
+        args: {
+          events: [
+            {
+              name: args.name,
+              properties: args.properties,
+              distinctId: args.distinctId,
+            },
+          ],
+          processEveryK: configuration.processEveryK,
+          processApi: `${options.base}:${options.process}`,
         },
       }
     );
   }
 };
 
-const trackFromAction = (
+const trackFromAction = async (
   context: GenericActionCtx<AnyDataModel>,
   args: TrackArgs,
   execution: Execution,
   configuration: InternalConfiguration,
   options: InternalOptions
 ) => {
-  if (execution.blocking)
-    return storeDispatchTyped(
+  if (execution.blocking) {
+    await storeDispatchTyped(
+      "createEventsAndCheckThreshold",
       {
-        table: "events",
-        operation: "insert",
-        data: {
-          tag: args.tag,
-          content: args.content,
-          processedAt: null,
-        },
+        events: [
+          {
+            name: args.name,
+            properties: args.properties,
+            distinctId: args.distinctId,
+          },
+        ],
       },
       context,
       configuration,
       options
     );
-  else
-    return context.scheduler.runAfter(
+  } else {
+    await context.scheduler.runAfter(
       0,
       `${options.base}:${options.store}` as unknown as typeof anyApi.analytics.store,
       {
-        table: "events",
-        operation: "insert",
-        data: {
-          tag: args.tag,
-          content: args.content,
-          processedAt: null,
+        operation: "createEventsAndCheckThreshold",
+        args: {
+          events: [
+            {
+              name: args.name,
+              properties: args.properties,
+              distinctId: args.distinctId,
+            },
+          ],
+          processEveryK: configuration.processEveryK,
+          processApi: `${options.base}:${options.process}`,
         },
       }
     );
+  }
+};
+
+const incrementEventCounter = async (
+  context: GenericMutationCtx<AnalyticsDataModel>
+): Promise<number> => {
+  const counter = await context.db.query("analyticsEventCounter").first();
+
+  if (!counter) {
+    await context.db.insert("analyticsEventCounter", {
+      unprocessedCount: 1,
+      lastProcessedAt: null,
+    });
+    return 1;
+  }
+
+  const newCount = counter.unprocessedCount + 1;
+  await context.db.patch(counter._id, {
+    unprocessedCount: newCount,
+  });
+  return newCount;
 };

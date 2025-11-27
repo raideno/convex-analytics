@@ -9,7 +9,6 @@
   ],
   "workspaces": [
     "packages/lib",
-    "packages/docs",
     "packages/demo"
   ],
   "homepage": "https://raideno.github.io/convex-analytics",
@@ -21,8 +20,5 @@
   "license": "Apache-2.0",
   "author": "raideno",
   "scripts": {},
-  "type": "module",
-  "devDependencies": {
-    "globals": "^16.4.0"
-  }
+  "type": "module"
 }

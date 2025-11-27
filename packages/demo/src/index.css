@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+.radix-themes {
+  --cursor-button: pointer !important;
+}
+
+main {
+  padding-top: 1em;
+  padding-bottom: 1em;
+  width: min(800px, 95vw);
+  margin: 0 auto;
+}

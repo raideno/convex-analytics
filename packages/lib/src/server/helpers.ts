@@ -20,7 +20,8 @@ export const normalizeConfiguration = (
     execution: {
       blocking: config.execution?.blocking ?? DEFAULT_EXECUTION_BLOCKING,
     },
-    processors: config.processors || [],
+    processEveryK: config.processEveryK,
+    processors: config.processors,
   };
 };
 

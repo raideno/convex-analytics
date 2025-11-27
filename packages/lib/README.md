@@ -1,3 +1,3 @@
 # Convex Analytics
 
-TODO: complete
+Go to [Convex Analytics Readme](../../README.md) for documentation.

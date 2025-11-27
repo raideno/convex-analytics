@@ -11,6 +11,9 @@ export default defineConfig({
     lib: {
       entry: {
         server: "src/server/index.ts",
+        processors: "src/server/processors/index.ts",
+        "processors/discord": "src/server/processors/discord.ts",
+        "processors/posthog": "src/server/processors/posthog.ts",
       },
       formats: ["es"],
     },

@@ -19,8 +19,8 @@ export type Processor = {
   events: Array<string>;
   handler: (
     context: GenericActionCtx<AnyDataModel>,
-    args: Array<AnalyticsDataModel["events"]["document"]>
-  ) => Promise<void>;
+    events: Array<AnalyticsDataModel["analyticsEvents"]["document"]>
+  ) => Promise<Array<string>>;
 };
 
 export type Execution = {
@@ -29,6 +29,7 @@ export type Execution = {
 
 export interface InternalConfiguration {
   processors: Array<Processor>;
+  processEveryK: number;
   execution: Execution;
   callback?: {
     unstable__afterChange?: (

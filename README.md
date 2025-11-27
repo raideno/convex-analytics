@@ -1,28 +1,99 @@
 # Convex Analytics Package
 
-Compatible with bare convex or any other analytics platform such as posthog or other.
+Convex agnostic analytics package. Compatible with posthog, discord webhooks, mail alerts, etc.
 
-You just get a handler to a with posthog, etc.
+```bash
+npm install @raideno/convex-analytics
+```
 
-Include with it an extension, open source that sends data through the api when, you dm someone while being on coldemailing mode. Coldmeailing but for twitter, reddit, discord dms, etc.
+`convex/analytics.ts`
+```ts
+import { internalConvexAnalytics } from "@raideno/convex-analytics/server";
+import { DiscordProcessorFactory } from "@raideno/convex-analytics/processors/discord";
+import { PosthogProcessorFactory } from "@raideno/convex-analytics/processors/posthog";
 
---- --- ---
+import configuration from "./analytics.config";
 
-Syncing and calling processors will be done in an outside loop using cron jobs. One will eventually run each minute (or customized) and will check if it needs to run any processors, if it needs then it'll just run them in batches by scheduling them and then going back to sleep.
+const url = "https://discord.com/api/webhooks/1443520379363528744/ALgVzYHekpDklF3p8xzdxGFJ2JxBETutAAbis8RdG3wDAMXawlINm9b0d15PzzKyHHGe";
 
-TODO: since afterFinish action can be and can delete the records, for now we won't support having processors handling the same tags, otherwise it'll be at your own risks and you can observe weird behaviours, checks will be made at runtime to print a warning in case this is done.
-So you either use a '*' tag to match them all or you use specific tags with no duplicates.
+export const { store, analytics, process } = internalConvexAnalytics({
+    processors: [
+        /*
+         * Will only capture events named "demo_perform_action".
+         */
+        DiscordProcessorFactory({
+            url: url,
+            events: ["demo_perform_action"],
+        }),
+        /*
+         * Will capture all events.
+         */
+        PosthogProcessorFactory({
+            key: process.env.POSTHOG_KEY!,
+            host: "https://us.i.posthog.com",
+            events: ["*"],
+        }),
+    ],
+    processEveryK: 1,
+});
+```
 
-But this is annoying, we should allow duplicates, because what if you when receiving a payment you want to both receive a notification per email, discord or whatever but also track the event using posthog ?
+`convex/actions.ts`
+```ts
+/*
+ * Imports
+ */
 
-A potential solution would be to disentangle the processing from the thing performed after to the processed events, this way we can just execute all the processors and once they're done we execute the cleanup functions, they receive the tags and stuff and do whatever they want.
- 
---- --- ---
+import { analytics } from "./analytics"
 
-Since we aren't providing typing for the content and the tags, we'll provide helper types to make it easy to make everything type safe.
+export const perform = action({
+  args: {
+    value: v.optional(v.string()),
+  },
+  handler: async (context, args) => {
+    /*
+     * ...
+     */
 
---- --- ---
+    await analytics.track(
+      context as unknown as GenericActionCtx<AnyDataModel>,
+      {
+        name: "demo_perform_action",
+        distinctId: userId,
+        properties: {
+          value: args.value || "no_value",
+        },
+      }
+    );
 
-// TODO: optional function to be passed in to handle what to do after sync
-// TODO: some prebuilt functions are available such as delete after sync, keep etc.
-afterSync: any;
+    /*
+     * ...
+     */
+  },
+});
+```
+
+You can also provide custom processors by implementing the `Processor` interface from `@raideno/convex-analytics/processors`.
+```ts
+export const { store, analytics, process } = internalConvexAnalytics({
+    processors: [
+        {
+            events: ["*"],
+            /*
+             * Receives an action context and a batch of events of up to `processEveryK`.
+             * Must return the list of processed event IDs.
+             */
+            handler: async (context, events) => {
+                console.log(
+                    "[events]:",
+                    events.map((e) => e.name)
+                );
+                return events.map((e) => e._id);
+            },
+        } as Processor,
+    ],
+    processEveryK: 1,
+});
+```
+
+An example app can be found in the [demo package](./packages/demo/README.md).

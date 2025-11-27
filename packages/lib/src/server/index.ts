@@ -1,7 +1,5 @@
 import {
-  anyApi,
   AnyDataModel,
-  Crons,
   GenericActionCtx,
   GenericMutationCtx,
   internalActionGeneric,
@@ -24,25 +22,12 @@ export { InputConfiguration };
 
 export const internalConvexAnalytics = (
   configuration_: InputConfiguration,
-  options_: InputOptions
+  options_?: InputOptions
 ) => {
   const ConvexAnalyticsConfiguration = normalizeConfiguration(configuration_);
-  const ConvexAnalyticsOptions = normalizeOptions(options_);
+  const ConvexAnalyticsOptions = normalizeOptions(options_ || {});
 
-  /**
-   * TODO: tag validation will be done in configuration by passing processors through a function
-   */
   return {
-    addCronJobs: (
-      crons: Crons,
-      interval?: Parameters<Crons["interval"]>[1]
-    ) => {
-      crons.interval(
-        "convex-analytics-process-events",
-        interval || { minutes: 1 },
-        `${ConvexAnalyticsOptions.base}:${ConvexAnalyticsOptions.process}` as unknown as typeof anyApi.analytics.process
-      );
-    },
     analytics: {
       /**
        * Tracks an event using the provided context.
