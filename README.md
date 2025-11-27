@@ -27,15 +27,13 @@ import { PosthogProcessorFactory } from "@raideno/convex-analytics/processors/po
 
 import configuration from "./analytics.config";
 
-const url = "https://discord.com/api/webhooks/1443520379363528744/ALgVzYHekpDklF3p8xzdxGFJ2JxBETutAAbis8RdG3wDAMXawlINm9b0d15PzzKyHHGe";
-
 export const { store, analytics, process } = internalConvexAnalytics({
     processors: [
         /*
          * Will only capture events named "demo_perform_action".
          */
         DiscordProcessorFactory({
-            url: url,
+            url: process.env.DISCORD_WEBHOOK_URL!,
             events: ["demo_perform_action"],
         }),
         /*

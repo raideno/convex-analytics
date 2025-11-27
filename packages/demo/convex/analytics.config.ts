@@ -5,7 +5,7 @@ import { Processor } from "@raideno/convex-analytics/processors";
 export default {
   processors: [
     DiscordProcessorFactory({
-      url: "https://discord.com/api/webhooks/1443520379363528744/ALgVzYHekpDklF3p8xzdxGFJ2JxBETutAAbis8RdG3wDAMXawlINm9b0d15PzzKyHHGe",
+      url: process.env.DISCORD_WEBHOOK_URL!,
       events: ["*"],
     }),
     {
