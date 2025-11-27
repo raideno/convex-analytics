@@ -1,6 +1,6 @@
 {
   "name": "@raideno/convex-analytics",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Easily integrate analytics into your convex backend.",
   "keywords": [
     "analytics",

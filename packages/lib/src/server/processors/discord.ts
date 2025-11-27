@@ -1,8 +1,5 @@
 import { Processor } from "@/types";
 
-/**
- * TODO: improve by including allowing to pass in a custom formatting function for the body and title
- */
 export type DiscordProcessorFactoryArgs = {
   url: string;
   events: Array<string>;

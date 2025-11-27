@@ -10,11 +10,6 @@ import { Logger } from "@/logger";
 import { AnalyticsDataModel } from "./schema";
 import { StoreImplementation } from "./store";
 
-/**
- * TODO: make it so tags can be a function that returns an array this way we have maximal flexibility.
- * TODO: make it so the size can be a function that returns a number based on the tag this way we have maximal flexibility.
- * TODO: add a retries mechanism. add max retries configuration as well.
- */
 export type Processor = {
   events: Array<string>;
   handler: (
