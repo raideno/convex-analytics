@@ -6,6 +6,19 @@ Convex agnostic analytics package. Compatible with posthog, discord webhooks, ma
 npm install @raideno/convex-analytics
 ```
 
+`convex/schema.ts`
+```ts
+import { analyticsTables } from "@raideno/convex-analytics/server";
+import { defineSchema } from "convex/server";
+
+export default defineSchema({
+  ...analyticsTables,
+  /*
+   * Your app tables...
+   */
+});
+```
+
 `convex/analytics.ts`
 ```ts
 import { internalConvexAnalytics } from "@raideno/convex-analytics/server";
