@@ -21,12 +21,22 @@ export const TrackImplementation = (
   configuration: InternalConfiguration,
   options: InternalOptions
 ) => {
-  if ("runAction" in context) {
-    return trackFromAction(context, args, execution, configuration, options);
-  } else if ("runMutation" in context) {
-    return trackFromMutation(context, args, execution, configuration, options);
-  } else {
-    throw new Error("Invalid context provided to track function.");
+  try {
+    if ("runAction" in context) {
+      return trackFromAction(context, args, execution, configuration, options);
+    } else if ("runMutation" in context) {
+      return trackFromMutation(
+        context,
+        args,
+        execution,
+        configuration,
+        options
+      );
+    } else {
+      throw new Error("Invalid context provided to track function.");
+    }
+  } catch (error) {
+    console.error("Error in TrackImplementation:", error);
   }
 };
 
