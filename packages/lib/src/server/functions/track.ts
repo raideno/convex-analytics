@@ -3,7 +3,6 @@ import { storeDispatchTyped } from "@/store";
 import { Execution, InternalConfiguration, InternalOptions } from "@/types";
 import {
   anyApi,
-  AnyDataModel,
   GenericActionCtx,
   GenericMutationCtx,
 } from "convex/server";
@@ -15,7 +14,7 @@ export type TrackArgs = {
 };
 
 export const TrackImplementation = (
-  context: GenericActionCtx<AnyDataModel> | GenericMutationCtx<AnyDataModel>,
+  context: GenericActionCtx<AnalyticsDataModel> | GenericMutationCtx<AnalyticsDataModel>,
   args: TrackArgs,
   execution: Execution,
   configuration: InternalConfiguration,
@@ -94,7 +93,7 @@ const trackFromMutation = async (
 };
 
 const trackFromAction = async (
-  context: GenericActionCtx<AnyDataModel>,
+  context: GenericActionCtx<AnalyticsDataModel>,
   args: TrackArgs,
   execution: Execution,
   configuration: InternalConfiguration,

@@ -8,14 +8,25 @@ import type { Processor } from "@/types";
 
 export { Processor };
 
-export const ProcessImplementation = defineActionImplementation({
+export const defineProcessor =
+  <DataModel extends AnyDataModel = any>() =>
+    <const TEvents extends ReadonlyArray<string>>(processor: {
+      events: TEvents;
+      handler: (
+        context: GenericActionCtx<DataModel>,
+        events: Array<any>
+      ) => Promise<Array<string>>;
+    }): Processor<DataModel, TEvents> =>
+      processor;
+
+export const ConsumeImplementation = defineActionImplementation({
   args: {},
-  name: "convex-analytics-processor-implementation",
+  name: "convex-analytics-consume-implementation",
   handler: async (context, args, configuration, options) => {
     const events = await storeDispatchTyped(
       "fetchUnprocessedEvents",
       {},
-      context as unknown as GenericActionCtx<AnyDataModel>,
+      context,
       configuration,
       options
     );
@@ -24,7 +35,7 @@ export const ProcessImplementation = defineActionImplementation({
 
     for (const processor of configuration.processors) {
       const compatible = events.filter((event) => {
-        return processor.events.some((pattern) => {
+        return (processor.events as ReadonlyArray<string>).some((pattern: string) => {
           return new RegExp(
             `^${pattern
               .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
@@ -36,17 +47,11 @@ export const ProcessImplementation = defineActionImplementation({
       if (compatible.length === 0) continue;
 
       try {
-        const processedEventIds = await processor.handler(
-          context as unknown as GenericActionCtx<AnyDataModel>,
-          compatible
-        );
-
+        const processedEventIds = await processor.handler(context, compatible);
         processedIds.push(...processedEventIds);
       } catch (error) {
         console.error(
-          `Error processing events with processor for events [${processor.events.join(
-            ", "
-          )}]:`,
+          `Error processing events with processor for events [${(processor.events as ReadonlyArray<string>).join(", ")}]:`,
           error
         );
       }
@@ -59,7 +64,7 @@ export const ProcessImplementation = defineActionImplementation({
           GenericId<"analyticsEvents">
         >,
       },
-      context as unknown as GenericActionCtx<AnyDataModel>,
+      context,
       configuration,
       options
     );

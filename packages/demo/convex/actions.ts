@@ -1,9 +1,8 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { AnyDataModel, GenericActionCtx } from "convex/server";
 
+import { v } from "convex/values";
 import { action } from "./_generated/server";
 import { analytics } from "./analytics";
-import { v } from "convex/values";
 
 export const perform = action({
   args: {
@@ -15,9 +14,9 @@ export const perform = action({
     if (!userId) throw new Error("Unauthorized");
 
     await analytics.track(
-      context as unknown as GenericActionCtx<AnyDataModel>,
+      context,
       {
-        name: "demo_perform_action",
+        name: "users:performed_action",
         distinctId: userId,
         properties: {
           value: args.value || "no_value",

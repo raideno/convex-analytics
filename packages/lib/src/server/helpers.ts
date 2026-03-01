@@ -79,10 +79,10 @@ export type ArgSchema = Record<
 
 export type InferArgs<S extends ArgSchema> = {
   [K in keyof S as S[K] extends Validator<any, "required", any>
-    ? K
-    : never]: Infer<S[K]>;
+  ? K
+  : never]: Infer<S[K]>;
 } & {
   [K in keyof S as S[K] extends Validator<any, "optional", any>
-    ? K
-    : never]?: Infer<S[K]>;
+  ? K
+  : never]?: Infer<S[K]>;
 };

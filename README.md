@@ -86,7 +86,7 @@ export const perform = action({
 
 You can also provide custom processors by implementing the `Processor` interface from `@raideno/convex-analytics/processors`.
 ```ts
-export const { store, analytics, process } = internalConvexAnalytics({
+export const { store, analytics, consume } = internalConvexAnalytics({
     processors: [
         {
             events: ["*"],

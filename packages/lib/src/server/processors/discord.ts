@@ -1,15 +1,18 @@
-import { Processor } from "@/types";
+type ProcessorShape<TEvents extends ReadonlyArray<string>> = {
+  events: TEvents;
+  handler: (context: any, events: Array<any>) => Promise<Array<string>>;
+};
 
-export type DiscordProcessorFactoryArgs = {
+export type DiscordProcessorFactoryArgs<TEvents extends ReadonlyArray<string>> = {
   url: string;
-  events: Array<string>;
+  events: TEvents;
   username?: string;
   avatarUrl?: string;
 };
 
-export const DiscordProcessorFactory = (
-  args: DiscordProcessorFactoryArgs
-): Processor => {
+export const DiscordProcessorFactory = <const TEvents extends ReadonlyArray<string>>(
+  args: DiscordProcessorFactoryArgs<TEvents>
+): ProcessorShape<TEvents> => {
   return {
     events: args.events,
     handler: async (context, events) => {

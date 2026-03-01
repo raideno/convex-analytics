@@ -1,7 +1,8 @@
-import { AnyDataModel, GenericActionCtx } from "convex/server";
+import { GenericActionCtx } from "convex/server";
 import { v } from "convex/values";
 
 import { defineMutationImplementation, InferArgs } from "@/helpers";
+import { AnalyticsDataModel } from "@/schema";
 
 import { InternalConfiguration, InternalOptions } from "../types";
 
@@ -58,7 +59,7 @@ export async function storeDispatchTyped<
 >(
   operationName: T,
   args: MutationArgs<T>,
-  context: GenericActionCtx<AnyDataModel>,
+  context: GenericActionCtx<AnalyticsDataModel>,
   _: InternalConfiguration,
   options: InternalOptions
 ): Promise<MutationReturnType<T>> {

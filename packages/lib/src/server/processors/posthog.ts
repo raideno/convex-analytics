@@ -1,13 +1,17 @@
-import { Processor } from "@/types";
+type ProcessorShape<TEvents extends ReadonlyArray<string>> = {
+  events: TEvents;
+  handler: (context: any, events: Array<any>) => Promise<Array<string>>;
+};
 
-export type PosthogProcessorFactoryArgs = {
+export type PosthogProcessorFactoryArgs<TEvents extends ReadonlyArray<string>> = {
   key: string;
   host: string;
-  events: Array<string>;
+  events: TEvents;
 };
-export const PosthogProcessorFactory = (
-  args: PosthogProcessorFactoryArgs
-): Processor => {
+
+export const PosthogProcessorFactory = <const TEvents extends ReadonlyArray<string>>(
+  args: PosthogProcessorFactoryArgs<TEvents>
+): ProcessorShape<TEvents> => {
   return {
     events: args.events,
     handler: async (_, events) => {

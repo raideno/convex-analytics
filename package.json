@@ -19,6 +19,11 @@
   },
   "license": "Apache-2.0",
   "author": "raideno",
-  "scripts": {},
-  "type": "module"
+  "scripts": {
+    "sync-documentation": "node scripts/sync-documentation.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@rollup/rollup-darwin-arm64": "^4.59.0"
+  }
 }
